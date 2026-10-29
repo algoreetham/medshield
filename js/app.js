@@ -438,6 +438,17 @@ Respond ONLY with valid JSON conforming exactly to this structure:
       if (btnCloseMitreFooter && mitreModal) {
         btnCloseMitreFooter.addEventListener('click', () => mitreModal.classList.remove('open'));
       }
+
+      // Scanlines Toggle
+      const btnScanlines = document.getElementById('btn-toggle-scanlines');
+      const shell = document.querySelector('.warroom-shell');
+      if (btnScanlines && shell) {
+        btnScanlines.addEventListener('click', () => {
+          const active = shell.classList.toggle('scanlines-active');
+          btnScanlines.textContent = active ? 'SCANLINES: ON' : 'SCANLINES: OFF';
+          btnScanlines.className = active ? 'hud-btn hud-btn-primary' : 'hud-btn hud-btn-ghost';
+        });
+      }
     }
 
     startSimulation() {
