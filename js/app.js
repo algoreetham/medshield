@@ -277,6 +277,12 @@ Respond ONLY with valid JSON conforming exactly to this structure:
         });
       }
 
+      // Export Report Trigger
+      const btnExport = document.getElementById('btn-export-report');
+      if (btnExport) {
+        btnExport.addEventListener('click', () => this.exportIncidentReport());
+      }
+
       // API Key Config Trigger
       const btnApiKey = document.getElementById('btn-config-api-key');
       if (btnApiKey) {
@@ -731,6 +737,37 @@ Respond ONLY with valid JSON conforming exactly to this structure:
       }
 
       this.showToast('War-Room baseline telemetry reset.');
+    }
+
+    exportIncidentReport() {
+      const report = {
+        metadata: {
+          system: 'MedShield AI Healthcare Cybersecurity SOC',
+          report_id: `FORENSIC-${Date.now()}`,
+          generated_at: new Date().toISOString(),
+          environment: 'St. Jude Regional Medical Center (VLAN-142)'
+        },
+        incident_summary: {
+          active_status: this.isIncidentActive ? 'CRITICAL_TRAVERSAL_DETECTED' : 'BASELINE_NORMAL',
+          cyber_threat_score: document.getElementById('gauge-val-cyber')?.textContent || '12',
+          clinical_risk_level: document.getElementById('gauge-val-clinical')?.textContent || 'LOW',
+          target_asset: document.getElementById('hud-target-name')?.textContent || 'Hospital Core VLAN',
+          mitre_classification: document.getElementById('hud-classification-title')?.textContent || 'Zero Attack Traversal'
+        },
+        assets_status: this.assets,
+        telemetry_events: this.eventsHistory,
+        containment_plan: this.containmentSteps
+      };
+
+      const dataStr = 'data:text/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(report, null, 2));
+      const downloadAnchor = document.createElement('a');
+      downloadAnchor.setAttribute('href', dataStr);
+      downloadAnchor.setAttribute('download', `medshield-incident-report-${Date.now()}.json`);
+      document.body.appendChild(downloadAnchor);
+      downloadAnchor.click();
+      downloadAnchor.remove();
+
+      this.showToast('Forensic telemetry report exported successfully.');
     }
 
     showToast(message) {
