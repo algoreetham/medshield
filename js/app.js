@@ -7,6 +7,77 @@
   const { INITIAL_ASSETS, SCENARIO_1, SCENARIO_2 } = window.MedShieldData || {};
 
   /* ==========================================================================
+     TACTICAL AUDIO SYNTHESIZER (Web Audio API - Zero External Dependencies)
+     ========================================================================== */
+  class SoundFXManager {
+    constructor() {
+      this.enabled = false;
+      this.ctx = null;
+    }
+
+    init() {
+      if (!this.ctx && (window.AudioContext || window.webkitAudioContext)) {
+        this.ctx = new (window.AudioContext || window.webkitAudioContext)();
+      }
+    }
+
+    toggle() {
+      this.init();
+      if (this.ctx && this.ctx.state === 'suspended') {
+        this.ctx.resume();
+      }
+      this.enabled = !this.enabled;
+      return this.enabled;
+    }
+
+    playRadarPing() {
+      if (!this.enabled || !this.ctx) return;
+      const osc = this.ctx.createOscillator();
+      const gain = this.ctx.createGain();
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(880, this.ctx.currentTime);
+      osc.frequency.exponentialRampToValueAtTime(440, this.ctx.currentTime + 0.15);
+      gain.gain.setValueAtTime(0.04, this.ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + 0.15);
+      osc.connect(gain);
+      gain.connect(this.ctx.destination);
+      osc.start();
+      osc.stop(this.ctx.currentTime + 0.15);
+    }
+
+    playAlertTone() {
+      if (!this.enabled || !this.ctx) return;
+      const osc = this.ctx.createOscillator();
+      const gain = this.ctx.createGain();
+      osc.type = 'sawtooth';
+      osc.frequency.setValueAtTime(320, this.ctx.currentTime);
+      osc.frequency.linearRampToValueAtTime(480, this.ctx.currentTime + 0.2);
+      gain.gain.setValueAtTime(0.06, this.ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + 0.25);
+      osc.connect(gain);
+      gain.connect(this.ctx.destination);
+      osc.start();
+      osc.stop(this.ctx.currentTime + 0.25);
+    }
+
+    playContainmentChord() {
+      if (!this.enabled || !this.ctx) return;
+      [523.25, 659.25, 783.99].forEach((freq, idx) => {
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(freq, this.ctx.currentTime + (idx * 0.05));
+        gain.gain.setValueAtTime(0.05, this.ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + 0.6);
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+        osc.start(this.ctx.currentTime + (idx * 0.05));
+        osc.stop(this.ctx.currentTime + 0.6);
+      });
+    }
+  }
+
+  /* ==========================================================================
      AI CORRELATION & ATTRIBUTION MANAGER (Sections 17, 41–44)
      ========================================================================== */
   class AIEngineManager {
@@ -240,6 +311,7 @@ Respond ONLY with valid JSON conforming exactly to this structure:
       this.isIncidentActive = false;
 
       this.aiEngine = new AIEngineManager();
+      this.soundFX = new SoundFXManager();
       this.simulation = new SimulationEngine({
         onStep: (step, index, allSteps) => this.handleSimulationStep(step, index, allSteps),
         onComplete: (scenario) => this.handleSimulationComplete(scenario),
@@ -274,6 +346,18 @@ Respond ONLY with valid JSON conforming exactly to this structure:
       if (select) {
         select.addEventListener('change', (e) => {
           this.aiEngine.setProvider(e.target.value);
+        });
+      }
+
+      // Audio Toggle Trigger
+      const btnAudio = document.getElementById('btn-toggle-audio');
+      if (btnAudio) {
+        btnAudio.addEventListener('click', () => {
+          const isEnabled = this.soundFX.toggle();
+          btnAudio.textContent = isEnabled ? 'AUDIO: ON' : 'AUDIO: OFF';
+          btnAudio.className = isEnabled ? 'hud-btn hud-btn-primary' : 'hud-btn hud-btn-ghost';
+          if (isEnabled) this.soundFX.playRadarPing();
+          this.showToast(isEnabled ? 'Tactical audio telemetry enabled.' : 'Audio muted.');
         });
       }
 
@@ -371,6 +455,12 @@ Respond ONLY with valid JSON conforming exactly to this structure:
     }
 
     handleSimulationStep(step, index, allSteps) {
+      if (step.cyberScore > 50) {
+        this.soundFX.playAlertTone();
+      } else {
+        this.soundFX.playRadarPing();
+      }
+
       // 1. Update Gauge 1: Top Arc Meter
       const arcPath = document.getElementById('arc-threat-path');
       const needle = document.getElementById('arc-needle');
@@ -582,6 +672,8 @@ Respond ONLY with valid JSON conforming exactly to this structure:
       // Hide attack laser lines
       const traj = document.getElementById('attack-trajectories');
       if (traj) traj.style.display = 'none';
+
+      this.soundFX.playContainmentChord();
 
       // Restore all 6 asset pods to normal
       this.assets.forEach((a, idx) => {
