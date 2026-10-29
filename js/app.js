@@ -423,6 +423,21 @@ Respond ONLY with valid JSON conforming exactly to this structure:
       if (btnCloseKeyModal) {
         btnCloseKeyModal.addEventListener('click', () => this.closeApiKeyModal());
       }
+
+      // MITRE Matrix Modal Events
+      const btnMitre = document.getElementById('btn-mitre-matrix');
+      const mitreModal = document.getElementById('mitre-modal');
+      if (btnMitre && mitreModal) {
+        btnMitre.addEventListener('click', () => mitreModal.classList.add('open'));
+      }
+      const btnCloseMitre = document.getElementById('btn-close-mitre-modal');
+      if (btnCloseMitre && mitreModal) {
+        btnCloseMitre.addEventListener('click', () => mitreModal.classList.remove('open'));
+      }
+      const btnCloseMitreFooter = document.getElementById('btn-close-mitre-footer');
+      if (btnCloseMitreFooter && mitreModal) {
+        btnCloseMitreFooter.addEventListener('click', () => mitreModal.classList.remove('open'));
+      }
     }
 
     startSimulation() {

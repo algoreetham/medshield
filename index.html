@@ -55,6 +55,9 @@
       </div>
 
       <div class="top-right">
+        <button id="btn-mitre-matrix" class="hud-btn hud-btn-ghost" title="View Healthcare MITRE ATT&CK matrix">
+          MITRE Matrix
+        </button>
         <button id="btn-toggle-audio" class="hud-btn hud-btn-ghost" title="Toggle tactical audio effects">
           AUDIO: OFF
         </button>
@@ -405,6 +408,64 @@
       <div class="modal-footer">
         <button id="btn-cancel-containment" class="hud-btn hud-btn-ghost">Cancel</button>
         <button id="btn-confirm-containment" class="hud-btn hud-btn-danger">Confirm & Execute Containment</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======================================================================
+       HEALTHCARE MITRE ATT&CK MATRIX MODAL
+       ====================================================================== -->
+  <div id="mitre-modal" class="modal-overlay">
+    <div class="modal-card" style="width: 720px; max-width: 95vw; border-color: var(--glow-cyan); box-shadow: 0 0 35px rgba(0, 229, 255, 0.25);">
+      <div class="modal-header">
+        <h3 style="color: var(--glow-cyan);">Healthcare MITRE ATT&CK Mapping Matrix</h3>
+        <button id="btn-close-mitre-modal" style="background: none; border: none; color: var(--text-dim); cursor: pointer; font-size: 16px;">✕</button>
+      </div>
+      <div class="modal-body" style="max-height: 70vh; overflow-y: auto;">
+        <p style="font-size: 12px; color: var(--text-dim);">
+          Mapping of adversary techniques observed in hospital network telemetry targeting clinical endpoints and biomedical devices.
+        </p>
+        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; font-family: var(--font-mono); font-size: 11px;">
+          <div style="background: rgba(0,0,0,0.4); border: 1px solid var(--border-line); border-radius: 4px; padding: 10px;">
+            <div style="color: var(--glow-cyan); font-weight: bold; font-size: 10px;">INITIAL ACCESS</div>
+            <div style="color: #ffffff; margin-top: 4px;">T1078.003</div>
+            <div style="color: var(--text-dim); font-size: 10px;">Valid Accounts: Compromised clinical staff VPN credentials.</div>
+            <span class="pod-status-badge status-critical" style="margin-top: 6px; display: inline-block;">ACTIVE ATTACK</span>
+          </div>
+          <div style="background: rgba(0,0,0,0.4); border: 1px solid var(--border-line); border-radius: 4px; padding: 10px;">
+            <div style="color: var(--glow-cyan); font-weight: bold; font-size: 10px;">PRIVILEGE ESCALATION</div>
+            <div style="color: #ffffff; margin-top: 4px;">T1068</div>
+            <div style="color: var(--text-dim); font-size: 10px;">Token Impersonation & local SYSTEM escalation on host-17.</div>
+            <span class="pod-status-badge status-critical" style="margin-top: 6px; display: inline-block;">ESCALATED</span>
+          </div>
+          <div style="background: rgba(0,0,0,0.4); border: 1px solid var(--border-line); border-radius: 4px; padding: 10px;">
+            <div style="color: var(--glow-cyan); font-weight: bold; font-size: 10px;">LATERAL TRAVERSAL</div>
+            <div style="color: #ffffff; margin-top: 4px;">T1021.002</div>
+            <div style="color: var(--text-dim); font-size: 10px;">Traversing from Core VLAN-10 to Medical IoT VLAN-30 gateway.</div>
+            <span class="pod-status-badge status-critical" style="margin-top: 6px; display: inline-block;">INTERCEPTED</span>
+          </div>
+          <div style="background: rgba(0,0,0,0.4); border: 1px solid var(--border-line); border-radius: 4px; padding: 10px;">
+            <div style="color: var(--glow-cyan); font-weight: bold; font-size: 10px;">DISCOVERY</div>
+            <div style="color: #ffffff; margin-top: 4px;">T1046</div>
+            <div style="color: var(--text-dim); font-size: 10px;">Network Service Scanning across TCP 8443 (Alaris Pump bridge).</div>
+            <span class="pod-status-badge status-warning" style="margin-top: 6px; display: inline-block;">DETECTED</span>
+          </div>
+          <div style="background: rgba(0,0,0,0.4); border: 1px solid var(--border-line); border-radius: 4px; padding: 10px;">
+            <div style="color: var(--glow-cyan); font-weight: bold; font-size: 10px;">COMMAND & CONTROL</div>
+            <div style="color: #ffffff; margin-top: 4px;">T1090</div>
+            <div style="color: var(--text-dim); font-size: 10px;">Proxy connection to external adversary command node 185.220.101.42.</div>
+            <span class="pod-status-badge status-warning" style="margin-top: 6px; display: inline-block;">FLAGGED</span>
+          </div>
+          <div style="background: rgba(0,0,0,0.4); border: 1px solid var(--border-line); border-radius: 4px; padding: 10px;">
+            <div style="color: var(--glow-red); font-weight: bold; font-size: 10px;">CLINICAL IMPACT</div>
+            <div style="color: #ffffff; margin-top: 4px;">T1485 / BIO-MED</div>
+            <div style="color: var(--text-dim); font-size: 10px;">Potential telemetry disruption to ICU smart pumps & central vitals.</div>
+            <span class="pod-status-badge status-critical" style="margin-top: 6px; display: inline-block;">MONITORED</span>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button id="btn-close-mitre-footer" class="hud-btn hud-btn-ghost">Close</button>
       </div>
     </div>
   </div>
