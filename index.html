@@ -474,6 +474,35 @@
   </div>
 
   <!-- ======================================================================
+       INTERACTIVE ASSET TELEMETRY INSPECTOR MODAL
+       ====================================================================== -->
+  <div id="asset-inspector-modal" class="modal-overlay">
+    <div class="modal-card" style="width: 580px; max-width: 90vw; border-color: var(--glow-cyan); box-shadow: 0 0 35px rgba(0, 229, 255, 0.25);">
+      <div class="modal-header">
+        <h3 id="inspector-asset-name" style="color: var(--glow-cyan);">Asset Telemetry Inspector</h3>
+        <button id="btn-close-inspector" style="background: none; border: none; color: var(--text-dim); cursor: pointer; font-size: 16px;">✕</button>
+      </div>
+      <div class="modal-body" style="font-family: var(--font-mono); font-size: 11.5px;">
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; background: rgba(0,0,0,0.4); padding: 12px; border: 1px solid var(--border-line); border-radius: 4px;">
+          <div><span style="color: var(--text-dim);">IP Address:</span> <strong id="insp-ip" style="color: #ffffff;">10.240.30.104</strong></div>
+          <div><span style="color: var(--text-dim);">VLAN Segment:</span> <strong id="insp-vlan" style="color: var(--glow-cyan);">VLAN-30-MED-IOT</strong></div>
+          <div><span style="color: var(--text-dim);">MAC Address:</span> <strong id="insp-mac" style="color: #ffffff;">00:1A:C2:7B:9F:44</strong></div>
+          <div><span style="color: var(--text-dim);">Device Class:</span> <strong id="insp-class" style="color: var(--glow-amber);">FDA Class II Medical</strong></div>
+          <div><span style="color: var(--text-dim);">Packet Ingress:</span> <strong id="insp-packets" style="color: var(--glow-emerald);">1,420 pkts/sec</strong></div>
+          <div><span style="color: var(--text-dim);">Security Status:</span> <strong id="insp-status" class="pod-status-badge status-normal">HEALTHY</strong></div>
+        </div>
+        <div style="background: rgba(0, 229, 255, 0.05); border-left: 2px solid var(--glow-cyan); padding: 8px 12px; font-size: 11px; color: var(--text-main);">
+          <strong>Clinical Impact Analysis:</strong> <span id="insp-desc">Smart intravenous pump infusion bridge connecting bedside units to pharmacy verification service.</span>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button id="btn-close-insp-footer" class="hud-btn hud-btn-ghost">Close</button>
+        <button id="btn-quarantine-single-asset" class="hud-btn hud-btn-danger">Simulate Isolation</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======================================================================
        GOOGLE GEMINI API KEY MODAL
        ====================================================================== -->
   <div id="api-key-modal" class="modal-overlay">

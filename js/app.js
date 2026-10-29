@@ -449,6 +449,17 @@ Respond ONLY with valid JSON conforming exactly to this structure:
           btnScanlines.className = active ? 'hud-btn hud-btn-primary' : 'hud-btn hud-btn-ghost';
         });
       }
+
+      // Asset Inspector Modal Events
+      const inspModal = document.getElementById('asset-inspector-modal');
+      const btnCloseInsp = document.getElementById('btn-close-inspector');
+      if (btnCloseInsp && inspModal) {
+        btnCloseInsp.addEventListener('click', () => inspModal.classList.remove('open'));
+      }
+      const btnCloseInspFooter = document.getElementById('btn-close-insp-footer');
+      if (btnCloseInspFooter && inspModal) {
+        btnCloseInspFooter.addEventListener('click', () => inspModal.classList.remove('open'));
+      }
     }
 
     startSimulation() {
@@ -619,7 +630,55 @@ Respond ONLY with valid JSON conforming exactly to this structure:
     renderPods() {
       this.assets.forEach((asset, idx) => {
         this.updateSinglePod(idx, asset.status);
+        const pod = document.getElementById(`pod-asset-${idx}`);
+        if (pod && !pod.dataset.bound) {
+          pod.dataset.bound = 'true';
+          pod.style.cursor = 'pointer';
+          pod.title = 'Click to inspect asset telemetry and clinical profile';
+          pod.addEventListener('click', () => this.openAssetInspector(idx));
+        }
       });
+    }
+
+    openAssetInspector(idx) {
+      const asset = this.assets[idx];
+      if (!asset) return;
+      const modal = document.getElementById('asset-inspector-modal');
+      if (!modal) return;
+
+      const nameEl = document.getElementById('inspector-asset-name');
+      if (nameEl) nameEl.textContent = `${asset.name} — Asset Inspector`;
+      const ipEl = document.getElementById('insp-ip');
+      if (ipEl) ipEl.textContent = asset.ip || '10.240.30.104';
+      const vlanEl = document.getElementById('insp-vlan');
+      if (vlanEl) vlanEl.textContent = asset.vlan || 'VLAN-30-MED-IOT';
+      const macEl = document.getElementById('insp-mac');
+      if (macEl) macEl.textContent = asset.mac || `00:1A:C2:7B:${idx}A:4${idx}`;
+      const classEl = document.getElementById('insp-class');
+      if (classEl) classEl.textContent = asset.tier || 'FDA Class II Biomedical';
+      const pktEl = document.getElementById('insp-packets');
+      if (pktEl) pktEl.textContent = `${(1200 + (idx * 280)).toLocaleString()} pkts/sec`;
+
+      const stEl = document.getElementById('insp-status');
+      if (stEl) {
+        stEl.textContent = asset.status;
+        stEl.className = `pod-status-badge ${asset.status === 'CRITICAL' ? 'status-critical' : asset.status === 'WARNING' ? 'status-warning' : 'status-normal'}`;
+      }
+
+      const descEl = document.getElementById('insp-desc');
+      if (descEl) descEl.textContent = asset.description || `Core hospital infrastructure node supporting ${asset.vlan} critical operations.`;
+
+      const btnQuar = document.getElementById('btn-quarantine-single-asset');
+      if (btnQuar) {
+        btnQuar.onclick = () => {
+          asset.status = 'QUARANTINED';
+          this.updateSinglePod(idx, 'NORMAL');
+          modal.classList.remove('open');
+          this.showToast(`Simulated quarantine policy applied to ${asset.name}.`);
+        };
+      }
+
+      modal.classList.add('open');
     }
 
     updateSinglePod(idx, status) {
